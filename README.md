@@ -1,4 +1,4 @@
-Validator
+Uploader
 ================
 
 [![Build Status](https://travis-ci.org/joaosoft/uploader.svg?branch=master)](https://travis-ci.org/joaosoft/uploader) | [![codecov](https://codecov.io/gh/joaosoft/uploader/branch/master/graph/badge.svg)](https://codecov.io/gh/joaosoft/uploader) | [![Go Report Card](https://goreportcard.com/badge/github.com/joaosoft/uploader)](https://goreportcard.com/report/github.com/joaosoft/uploader) | [![GoDoc](https://godoc.org/github.com/joaosoft/uploader?status.svg)](https://godoc.org/github.com/joaosoft/uploader)
