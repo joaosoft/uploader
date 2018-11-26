@@ -1,3 +1,1 @@
-package validator
-
-var validatorInstance = NewValidator()
+package uploader

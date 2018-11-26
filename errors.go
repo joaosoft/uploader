@@ -1,7 +1,3 @@
-package validator
+package uploader
 
-import "errors"
-
-var (
-	ErrorSkipValidation = errors.New("skip validation")
-)
+var ()
