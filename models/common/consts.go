@@ -1,5 +1,10 @@
 package common
 
 const (
-	DefaultURL = "http://localhost:8001"
+	ConstDefaultURL = "http://localhost:8001"
+
+	ConstStorageDatabase = "database"
+	ConstStorageRedis    = "redis"
+	ConstStorageRabbitmq = "rabbitmq"
+	ConstStorageDropbox  = "dropbox"
 )

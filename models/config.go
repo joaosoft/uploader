@@ -3,8 +3,13 @@ package models
 import (
 	"fmt"
 	"uploader/models/common"
-	"github.com/joaosoft/manager"
+
+	"github.com/joaosoft/migration/services"
+
+	"github.com/joaosoft/dropbox"
+
 	"github.com/joaosoft/logger"
+	"github.com/joaosoft/manager"
 )
 
 // AppConfig ...
@@ -14,9 +19,14 @@ type AppConfig struct {
 
 // UploaderConfig ...
 type UploaderConfig struct {
-	Host string           `json:"host"`
-	Db   manager.DBConfig `json:"db"`
-	Log  struct {
+	Storage   string                   `json:"storage"`
+	Host      string                   `json:"host"`
+	Db        manager.DBConfig         `json:"db"`
+	Redis     manager.RedisConfig      `json:"redis"`
+	Rabbitmq  manager.RabbitmqConfig   `json:"rabbitmq"`
+	Dropbox   dropbox.DropboxConfig    `json:"dropbox"`
+	Migration services.MigrationConfig `json:"migration"`
+	Log       struct {
 		Level string `json:"level"`
 	} `json:"log"`
 }

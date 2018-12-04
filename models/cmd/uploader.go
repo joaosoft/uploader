@@ -9,9 +9,11 @@ import (
 	"uploader/models/interactors"
 	"uploader/models/storage"
 
+	"github.com/joaosoft/migration/services"
+
+	"github.com/joaosoft/dropbox"
 	"github.com/joaosoft/logger"
 	"github.com/joaosoft/manager"
-	"github.com/joaosoft/migration/services"
 )
 
 type Uploader struct {
@@ -30,14 +32,6 @@ func NewUploader(options ...UploaderOption) (*Uploader, error) {
 	uploader := &Uploader{
 		pm: manager.NewManager(manager.WithRunInBackground(false)),
 	}
-
-	// execute migrations
-	migration, err := services.NewCmdService()
-	if err != nil {
-		return nil, err
-	}
-
-	migration.Execute(services.OptionUp, 0)
 
 	if uploader.isLogExternal {
 		uploader.pm.Reconfigure(manager.WithLogger(logger.Instance))
@@ -59,17 +53,62 @@ func NewUploader(options ...UploaderOption) (*Uploader, error) {
 	uploader.Reconfigure(options...)
 
 	if uploader.config.Host == "" {
-		uploader.config.Host = common.DefaultURL
+		uploader.config.Host = common.ConstDefaultURL
 	}
 
+	// execute migrations
+	migration, err := services.NewCmdService(services.WithCmdConfiguration(&uploader.config.Migration))
+	if err != nil {
+		return nil, err
+	}
+
+	if _, err := migration.Execute(services.OptionUp, 0); err != nil {
+		return nil, err
+	}
+
+	// database
 	simpleDB := manager.NewSimpleDB(&appConfig.Uploader.Db)
 	if err := uploader.pm.AddDB("db_postgres", simpleDB); err != nil {
 		logger.Error(err.Error())
 		return nil, err
 	}
 
+	// redis
+	simpleRedis := manager.NewSimpleRedis(&appConfig.Uploader.Redis)
+	if err := uploader.pm.AddRedis("redis", simpleRedis); err != nil {
+		logger.Error(err.Error())
+		return nil, err
+	}
+
+	// rabbitmq
+	simpleRabbitmq, err := manager.NewSimpleRabbitmqProducer(&appConfig.Uploader.Rabbitmq)
+	if err != nil {
+		logger.Error(err.Error())
+		return nil, err
+	}
+
+	if err := uploader.pm.AddRabbitmqProducer("rabbitmq", simpleRabbitmq); err != nil {
+		logger.Error(err.Error())
+		return nil, err
+	}
+
+	// choose the storage implementation
+	var storageImpl interactors.IStorage
+
+	switch uploader.config.Storage {
+	case common.ConstStorageDatabase:
+		storageImpl = storage.NewStorageDatabase(simpleDB)
+	case common.ConstStorageRedis:
+		storageImpl = storage.NewStorageRedis(simpleRedis)
+	case common.ConstStorageRabbitmq:
+		storageImpl = storage.NewStorageRabbitmq(simpleRabbitmq)
+	case common.ConstStorageDropbox:
+		storageImpl = storage.NewStorageDropbox(dropbox.NewDropbox(dropbox.WithConfiguration(&appConfig.Uploader.Dropbox)))
+	}
+
+	// web api
 	web := manager.NewSimpleWebServer(uploader.config.Host)
-	controller := controllers.NewController(interactors.NewInteractor(storage.NewStorageDatabase(simpleDB)))
+	controller := controllers.NewController(interactors.NewInteractor(storageImpl))
 	controller.RegisterRoutes(web)
 
 	uploader.pm.AddWeb("api_web", web)

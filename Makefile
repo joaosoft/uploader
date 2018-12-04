@@ -1,5 +1,7 @@
+env:
+	docker-compose up -d uploader.postgres uploader.redis uploader.rabbitmq
 run:
-	go run ./bin/launcher/main.go
+	go run ./main.go
 
 build:
 	go build .

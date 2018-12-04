@@ -1,8 +1,5 @@
 -- migrate up
-CREATE SCHEMA IF NOT EXISTS uploader;
-
-
-CREATE OR REPLACE FUNCTION uploader.function_updated_at()
+CREATE OR REPLACE FUNCTION function_updated_at()
   RETURNS TRIGGER AS $$
   BEGIN
    NEW.updated_at = now();
@@ -11,7 +8,7 @@ CREATE OR REPLACE FUNCTION uploader.function_updated_at()
   $$ LANGUAGE 'plpgsql';
 
 
-CREATE TABLE uploader.upload (
+CREATE TABLE upload (
   id_upload         TEXT NOT NULL,
   name              TEXT NOT NULL,
   file              BYTEA NOT NULL,
@@ -22,7 +19,7 @@ CREATE TABLE uploader.upload (
 
 
 CREATE TRIGGER trigger_upload_updated_at BEFORE UPDATE
-  ON uploader.upload FOR EACH ROW EXECUTE PROCEDURE uploader.function_updated_at();
+  ON upload FOR EACH ROW EXECUTE PROCEDURE function_updated_at();
 
 
 -- migrate down

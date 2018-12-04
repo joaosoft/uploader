@@ -1,9 +1,44 @@
 {
   "uploader": {
+    "storage": "rabbitmq",
     "host": "localhost:8001",
     "db": {
       "driver": "postgres",
-      "datasource": "postgres://postgres:@localhost:5432?sslmode=disable&search_path=uploader"
+      "datasource": "postgres://user:password@localhost:7100/postgres?sslmode=disable&search_path=public"
+    },
+    "redis": {
+      "host": "127.0.0.1",
+      "port": 7200,
+      "database": 0,
+      "password": ""
+    },
+    "dropbox": {
+      "log": {
+        "level": "info"
+      },
+      "authorization": {
+        "access": "Bearer",
+        "token": "XWMZxEau8I4AAAAAAACpZXtDO0i0hc_iNpCpdD5I_VtIM8JvbzzdNJkHCUsTOYlP"
+      },
+      "hosts": {
+        "api": "https://api.dropboxapi.com/2",
+        "content": "https://content.dropboxapi.com/2"
+      }
+    },
+    "migration": {
+      "path": "schema/db/postgres",
+      "db": {
+        "driver": "postgres",
+        "datasource": "postgres://user:password@localhost:7100/postgres?sslmode=disable&search_path=public"
+      },
+      "log": {
+        "level": "info"
+      }
+    },
+    "rabbitmq": {
+      "uri": "amqp://root:password@localhost:5673/local",
+      "exchange": "uploader-exchange",
+      "exchange_type": "direct"
     },
     "log": {
       "level": "info"
@@ -11,17 +46,10 @@
   },
   "manager": {
     "log": {
-      "level": "error"
-    }
-  },
-  "migration": {
-    "path": "schema/db/postgres",
-    "db": {
-      "driver": "postgres",
-      "datasource": "postgres://postgres:@localhost:5432?sslmode=disable&search_path=uploader"
-    },
-    "log": {
       "level": "info"
     }
   }
 }
+
+
+

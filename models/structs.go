@@ -20,3 +20,7 @@ type UploadResponse struct {
 	Name string `json:"name"`
 	Path string `json:"path"`
 }
+
+type DownloadRequest struct {
+	Path     string `json:"path" validate:"nonzero"`
+}

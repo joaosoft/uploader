@@ -27,6 +27,10 @@
 
 [[constraint]]
   branch = "master"
+  name = "github.com/joaosoft/dropbox"
+
+[[constraint]]
+  branch = "master"
   name = "github.com/joaosoft/errors"
 
 [[constraint]]

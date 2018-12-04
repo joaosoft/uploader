@@ -3,13 +3,14 @@ services:
 
   uploader.postgres:
     image: postgres
-    container_name: manager.postgres
+    container_name: uploader.postgres
     restart: always
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
+      PGDATA: "/var/lib/postgresql/data/pgdata"
     ports:
-    - 7001:5432
+    - 7100:5432
     volumes:
     - "$HOME/docker/postgres:/var/lib/postgresql/data"
     - "$HOME/docker/postgres/postgres:/var/log/postgres"
@@ -22,9 +23,9 @@ services:
 
   uploader.redis:
     image: redis:alpine
-    container_name: manager.redis
+    container_name: uploader.redis
     ports:
-    - 7100:6379
+    - 7200:6379
     volumes:
     - "$HOME/docker/redis/redis:/var/log/redis"
     - "./config/redis/redis.conf:/usr/local/etc/redis/redis.conf"
@@ -35,7 +36,7 @@ services:
 
   uploader.rabbitmq:
     image: rabbitmq:3.7.7-management
-    container_name: manager.rabbitmq
+    container_name: uploader.rabbitmq
     hostname: rabbitmq
     environment:
       RABBITMQ_DEFAULT_VHOST: local

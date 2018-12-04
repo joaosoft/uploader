@@ -50,6 +50,12 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/joaosoft/dropbox"
+  packages = ["."]
+  revision = "7a7a99fd63e0db8cf659f1198f940d6fea0e12f5"
+
+[[projects]]
+  branch = "master"
   name = "github.com/joaosoft/errors"
   packages = ["."]
   revision = "3ebf6983bd704eae5217e69e4371dd3f13834572"
@@ -64,25 +70,25 @@
   branch = "master"
   name = "github.com/joaosoft/manager"
   packages = ["."]
-  revision = "e39b649a689828ea54d0093a5ea51cc4ae74af6a"
+  revision = "e87747bfcc071131cb47f6270d5b52135bcfb4d2"
 
 [[projects]]
   branch = "master"
   name = "github.com/joaosoft/migration"
   packages = ["services"]
-  revision = "b43a827cdea4db2d5be1d443212fe96c90c2893c"
+  revision = "4647bbf9068e69abd5dbf3a8312dd6acc3aee908"
 
 [[projects]]
   branch = "master"
   name = "github.com/joaosoft/validator"
   packages = ["."]
-  revision = "3a8b089e565145c43e8694a3271fc606e9644b90"
+  revision = "64e4cfe1c0a6f9b0601a7a0fa801d6adda18c5e2"
 
 [[projects]]
   branch = "master"
   name = "github.com/joaosoft/web"
   packages = ["."]
-  revision = "ff75f863631f960cc7594e51a4bb196ba6514f59"
+  revision = "d150d59ecaa473ffad166e6d9ea6a02285faeee5"
 
 [[projects]]
   branch = "master"
@@ -220,7 +226,7 @@
     "acme",
     "acme/autocert"
   ]
-  revision = "eb0de9b17e854e9b1ccd9963efafc79862359959"
+  revision = "505ab145d0a99da450461ae2c1a9f6cd10d1f447"
 
 [[projects]]
   branch = "master"
@@ -250,12 +256,12 @@
 [[projects]]
   name = "gopkg.in/yaml.v2"
   packages = ["."]
-  revision = "5420a8b6744d3b0345ab293f6fcba19c978f1183"
-  version = "v2.2.1"
+  revision = "51d6538a90f86fe93ac480b35f37b2be17fef232"
+  version = "v2.2.2"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "b240272ba2f132f7a332f8e5c965a664fde3290fc1feb1626591edbef1c8a070"
+  inputs-digest = "2968f4b00d65f4568b71d5bf65d49fcf3c8db9a219283d59e5a0b539e5c3fba3"
   solver-name = "gps-cdcl"
   solver-version = 1
