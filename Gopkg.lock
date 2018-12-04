@@ -88,7 +88,7 @@
   branch = "master"
   name = "github.com/joaosoft/web"
   packages = ["."]
-  revision = "d150d59ecaa473ffad166e6d9ea6a02285faeee5"
+  revision = "8230370c8f2c96d7007f6b2751bf86b9538abef0"
 
 [[projects]]
   branch = "master"
@@ -205,7 +205,7 @@
   branch = "master"
   name = "github.com/streadway/amqp"
   packages = ["."]
-  revision = "27835f1a64e97101d95306211f03c0620ffa295d"
+  revision = "02019c73da7a16c968b4b9206e551ac19a58be82"
 
 [[projects]]
   name = "github.com/valyala/bytebufferpool"

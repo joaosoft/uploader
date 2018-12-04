@@ -18,7 +18,7 @@
       },
       "authorization": {
         "access": "Bearer",
-        "token": "XWMZxEau8I4AAAAAAACpZXtDO0i0hc_iNpCpdD5I_VtIM8JvbzzdNJkHCUsTOYlP"
+        "token": "XPTO"
       },
       "hosts": {
         "api": "https://api.dropboxapi.com/2",
