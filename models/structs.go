@@ -17,10 +17,9 @@ type UploadRequest struct {
 }
 
 type UploadResponse struct {
-	Name string `json:"name"`
-	Path string `json:"path"`
+	IdUpload string `json:"id_upload"`
 }
 
 type DownloadRequest struct {
-	Path     string `json:"path" validate:"nonzero"`
+	IdUpload string `json:"id_upload" validate:"nonzero"`
 }

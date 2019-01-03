@@ -52,43 +52,43 @@
   branch = "master"
   name = "github.com/joaosoft/dropbox"
   packages = ["."]
-  revision = "7a7a99fd63e0db8cf659f1198f940d6fea0e12f5"
+  revision = "f903e198565820ed891a6fab9301c8d42bd4c53b"
 
 [[projects]]
   branch = "master"
   name = "github.com/joaosoft/errors"
   packages = ["."]
-  revision = "3ebf6983bd704eae5217e69e4371dd3f13834572"
+  revision = "fdf3056873e72340b59c5b286ca94b07ae6fcf37"
 
 [[projects]]
   branch = "master"
   name = "github.com/joaosoft/logger"
   packages = ["."]
-  revision = "5dbae6961bbbc65c8be766e065787c71c37dbe99"
+  revision = "b245b1fd47dcf07bfac383551078de3c1d890de0"
 
 [[projects]]
   branch = "master"
   name = "github.com/joaosoft/manager"
   packages = ["."]
-  revision = "e87747bfcc071131cb47f6270d5b52135bcfb4d2"
+  revision = "e7100d0998a4dfdbbfce307f4cb87bba84f13029"
 
 [[projects]]
   branch = "master"
   name = "github.com/joaosoft/migration"
   packages = ["services"]
-  revision = "4647bbf9068e69abd5dbf3a8312dd6acc3aee908"
+  revision = "6f7730759aeb5ae397236a73e7c7a2951a2ac2de"
 
 [[projects]]
   branch = "master"
   name = "github.com/joaosoft/validator"
   packages = ["."]
-  revision = "64e4cfe1c0a6f9b0601a7a0fa801d6adda18c5e2"
+  revision = "42630c4f738f9f5ea2ab1c8a001441994b5df64d"
 
 [[projects]]
   branch = "master"
   name = "github.com/joaosoft/web"
   packages = ["."]
-  revision = "8230370c8f2c96d7007f6b2751bf86b9538abef0"
+  revision = "e35184df0822c622df91f8fca56cd32ba1eabd20"
 
 [[projects]]
   branch = "master"
@@ -174,8 +174,8 @@
     ".",
     "mem"
   ]
-  revision = "d40851caa0d747393da1ffb28f7f9d8b4eeffebd"
-  version = "v1.1.2"
+  revision = "a5d6946387efe7d64d09dcba68cdd523dc1273a3"
+  version = "v1.2.0"
 
 [[projects]]
   name = "github.com/spf13/cast"
@@ -198,14 +198,14 @@
 [[projects]]
   name = "github.com/spf13/viper"
   packages = ["."]
-  revision = "2c12c60302a5a0e62ee102ca9bc996277c2f64f5"
-  version = "v1.2.1"
+  revision = "6d33b5a963d922d182c91e8a1c88d81fd150cfd4"
+  version = "v1.3.1"
 
 [[projects]]
   branch = "master"
   name = "github.com/streadway/amqp"
   packages = ["."]
-  revision = "02019c73da7a16c968b4b9206e551ac19a58be82"
+  revision = "a314942b2fd9dde7a3f70ba3f1062848ce6eb392"
 
 [[projects]]
   name = "github.com/valyala/bytebufferpool"
@@ -226,13 +226,13 @@
     "acme",
     "acme/autocert"
   ]
-  revision = "505ab145d0a99da450461ae2c1a9f6cd10d1f447"
+  revision = "ff983b9c42bc9fbf91556e191cc8efb585c16908"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "4ed8d59d0b35e1e29334a206d1b3f38b1e5dfb31"
+  revision = "82a175fd1598e8a172e58ebdf5ed262bb29129e5"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -250,8 +250,8 @@
 [[projects]]
   name = "google.golang.org/appengine"
   packages = ["cloudsql"]
-  revision = "4a4468ece617fc8205e99368fa2200e9d1fad421"
-  version = "v1.3.0"
+  revision = "e9657d882bb81064595ca3b56cbe2546bbabf7b1"
+  version = "v1.4.0"
 
 [[projects]]
   name = "gopkg.in/yaml.v2"

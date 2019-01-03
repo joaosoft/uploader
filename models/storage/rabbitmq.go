@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"encoding/json"
 	"fmt"
 	"uploader/models"
 
@@ -22,17 +23,17 @@ func (storage *StorageRabbitmq) Upload(uploadRequest *models.UploadRequest) (*mo
 
 	logger.Infof("uploading file %s", uploadRequest.Name)
 	routingKey := fmt.Sprintf("upload.file")
-	storage.conn.Publish(routingKey, uploadRequest.File, true)
+	message, _ := json.Marshal(uploadRequest)
+	storage.conn.Publish(routingKey, message, true)
 
 	return &models.UploadResponse{
-		Name: uploadRequest.Name,
-		Path: routingKey,
+		IdUpload: uploadRequest.IdUpload,
 	}, nil
 }
 
-func (storage *StorageRabbitmq) Download(path string) ([]byte, error) {
+func (storage *StorageRabbitmq) Download(idUpload string) ([]byte, error) {
 
-	logger.Infof("downloading file with path %s", path)
+	logger.Infof("downloading file with id upload %s", idUpload)
 
 	return nil, nil
 }

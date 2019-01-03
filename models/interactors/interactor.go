@@ -9,7 +9,7 @@ import (
 
 type IStorage interface {
 	Upload(uploadRequest *models.UploadRequest) (*models.UploadResponse, error)
-	Download(path string) ([]byte, error)
+	Download(idUpload string) ([]byte, error)
 }
 
 type Interactor struct {
@@ -36,14 +36,14 @@ func (interactor *Interactor) Upload(uploadRequest *models.UploadRequest) (*mode
 	return response, err
 }
 
-func (interactor *Interactor) Download(path string) ([]byte, error) {
+func (interactor *Interactor) Download(idUpload string) ([]byte, error) {
 	logger.WithFields(map[string]interface{}{"method": "Download"})
-	logger.Infof("downloading file with path %s", path)
+	logger.Infof("downloading file with id upload %s", idUpload)
 
-	response, err := interactor.storage.Download(path)
+	response, err := interactor.storage.Download(idUpload)
 	if err != nil {
 		logger.WithFields(map[string]interface{}{"error": err.Error()}).
-			Errorf("error uploading file with path %s on storage [ error: %s]", path, err).ToError()
+			Errorf("error uploading file with id upload %s on storage [ error: %s]", idUpload, err).ToError()
 	}
 
 	return response, err

@@ -35,19 +35,18 @@ func (storage *StorageDatabase) Upload(uploadRequest *models.UploadRequest) (*mo
 	}
 
 	return &models.UploadResponse{
-		Name: uploadRequest.Name,
-		Path: uploadRequest.IdUpload,
+		IdUpload: uploadRequest.IdUpload,
 	}, nil
 }
 
-func (storage *StorageDatabase) Download(path string) ([]byte, error) {
+func (storage *StorageDatabase) Download(idUpload string) ([]byte, error) {
 
-	logger.Infof("downloading file with path %s", path)
+	logger.Infof("downloading file with id upload %s", idUpload)
 	row := storage.conn.Get().QueryRow(`
 		SELECT file FROM upload
-		WHERE name = $1
+		WHERE id_upload = $1
 	`,
-		path)
+		idUpload)
 
 	var file []byte
 	if err := row.Scan(&file); err != nil {

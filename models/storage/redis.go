@@ -21,19 +21,18 @@ func NewStorageRedis(connection manager.IRedis) *StorageRedis {
 func (storage *StorageRedis) Upload(uploadRequest *models.UploadRequest) (*models.UploadResponse, error) {
 
 	logger.Infof("uploading file %s", uploadRequest.Name)
-	key := fmt.Sprintf("image:%s", uploadRequest.Name)
+	key := fmt.Sprintf("image:%s", uploadRequest.IdUpload)
 	storage.conn.Set(key, uploadRequest.File)
 
 	return &models.UploadResponse{
-		Name: uploadRequest.Name,
-		Path: key,
+		IdUpload: uploadRequest.IdUpload,
 	}, nil
 }
 
-func (storage *StorageRedis) Download(path string) ([]byte, error) {
+func (storage *StorageRedis) Download(idUpload string) ([]byte, error) {
 
-	logger.Infof("downloading file with path %s", path)
-	key := fmt.Sprintf("image:%s", path)
+	logger.Infof("downloading file with id upload %s", idUpload)
+	key := fmt.Sprintf("image:%s", idUpload)
 
 	return storage.conn.Get(key)
 }

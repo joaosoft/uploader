@@ -1,10 +1,10 @@
 {
   "uploader": {
-    "storage": "redis",
+    "storage": "database",
     "host": "localhost:8001",
     "db": {
       "driver": "postgres",
-      "datasource": "postgres://user:password@localhost:7100/postgres?sslmode=disable&search_path=public"
+      "datasource": "postgres://user:password@localhost:7300/postgres?sslmode=disable&search_path=public"
     },
     "redis": {
       "host": "127.0.0.1",
@@ -18,7 +18,7 @@
       },
       "authorization": {
         "access": "Bearer",
-        "token": "XPTO"
+        "token": "XWMZxEau8I4AAAAAAACpZXtDO0i0hc_iNpCpdD5I_VtIM8JvbzzdNJkHCUsTOYlP"
       },
       "hosts": {
         "api": "https://api.dropboxapi.com/2",
@@ -29,7 +29,7 @@
       "path": "schema/db/postgres",
       "db": {
         "driver": "postgres",
-        "datasource": "postgres://user:password@localhost:7100/postgres?sslmode=disable&search_path=public"
+        "datasource": "postgres://user:password@localhost:7300/postgres?sslmode=disable&search_path=public"
       },
       "log": {
         "level": "info"

@@ -10,7 +10,7 @@ services:
       POSTGRES_PASSWORD: password
       PGDATA: "/var/lib/postgresql/data/pgdata"
     ports:
-    - 7100:5432
+    - 7300:5432
     volumes:
     - "$HOME/docker/postgres:/var/lib/postgresql/data"
     - "$HOME/docker/postgres/postgres:/var/log/postgres"
@@ -25,7 +25,7 @@ services:
     image: redis:alpine
     container_name: uploader.redis
     ports:
-    - 7200:6379
+    - 7400:6379
     volumes:
     - "$HOME/docker/redis/redis:/var/log/redis"
     - "./config/redis/redis.conf:/usr/local/etc/redis/redis.conf"

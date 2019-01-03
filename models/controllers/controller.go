@@ -37,13 +37,13 @@ func (controller *Controller) Upload(ctx *web.Context) error {
 	if errs := validator.Validate(uploadRequest); len(errs) > 0 {
 		err := errors.New("upload", errs)
 		logger.WithFields(map[string]interface{}{"error": err.Error()}).
-			Error("error when validating body uploadRequest").ToError()
+			Error("error when validating body of upload request").ToError()
 		return ctx.Response.JSON(web.StatusBadRequest, models.ErrorResponse{Code: web.StatusBadRequest, Message: err.Error()})
 	}
 
 	response, err := controller.interactor.Upload(uploadRequest)
 	if err != nil {
-		err := errors.New("0", err)
+		err := errors.New(errors.ErrorLevel, 0, err)
 		logger.WithFields(map[string]interface{}{"error": err.Error()}).
 			Errorf("error uploading file %s", uploadRequest.Name).ToError()
 		return ctx.Response.JSON(web.StatusBadRequest, models.ErrorResponse{Code: web.StatusBadRequest, Message: err.Error()})
@@ -53,28 +53,28 @@ func (controller *Controller) Upload(ctx *web.Context) error {
 }
 
 func (controller *Controller) Download(ctx *web.Context) error {
-	path := ctx.Request.GetUrlParam("path")
+	idUpload := ctx.Request.GetUrlParam("id_upload")
 	downloadRequest := &models.DownloadRequest{
-		Path: path,
+		IdUpload: idUpload,
 	}
 
 	if errs := validator.Validate(downloadRequest); len(errs) > 0 {
 		err := errors.New("download", errs)
 		logger.WithFields(map[string]interface{}{"error": err.Error()}).
-			Error("error when validating body downloadRequest").ToError()
+			Error("error when validating body of download request").ToError()
 		return ctx.Response.JSON(web.StatusBadRequest, models.ErrorResponse{Code: web.StatusBadRequest, Message: err.Error()})
 	}
 
-	response, err := controller.interactor.Download(path)
+	response, err := controller.interactor.Download(idUpload)
 	if err != nil {
-		err := errors.New("0", err)
+		err := errors.New(errors.ErrorLevel, 0, err)
 		logger.WithFields(map[string]interface{}{"error": err.Error()}).
-			Errorf("error downloading file with path %s", path).ToError()
+			Errorf("error downloading file with id upload %s", idUpload).ToError()
 		return ctx.Response.JSON(web.StatusBadRequest, models.ErrorResponse{Code: web.StatusBadRequest, Message: err.Error()})
 	} else {
 		decoded := make([]byte, base64.StdEncoding.DecodedLen(len(response)))
 		base64.StdEncoding.Decode(decoded, response)
 
-		return ctx.Response.File(web.StatusOK, path, decoded)
+		return ctx.Response.File(web.StatusOK, idUpload, decoded)
 	}
 }
