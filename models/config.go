@@ -14,7 +14,7 @@ import (
 
 // AppConfig ...
 type AppConfig struct {
-	Uploader UploaderConfig `json:"uploader"`
+	Uploader *UploaderConfig `json:"uploader"`
 }
 
 // UploaderConfig ...
@@ -40,5 +40,5 @@ func NewConfig(host string, db manager.DBConfig) *UploaderConfig {
 
 	appConfig.Uploader.Host = host
 
-	return &appConfig.Uploader
+	return appConfig.Uploader
 }

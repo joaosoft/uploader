@@ -41,14 +41,14 @@ func NewUploader(options ...UploaderOption) (*Uploader, error) {
 	appConfig := &models.AppConfig{}
 	if simpleConfig, err := manager.NewSimpleConfig(fmt.Sprintf("/config/app.%s.json", common.GetEnv()), appConfig); err != nil {
 		logger.Error(err.Error())
-	} else {
+	} else if appConfig.Uploader != nil {
 		uploader.pm.AddConfig("config_app", simpleConfig)
 		level, _ := logger.ParseLevel(appConfig.Uploader.Log.Level)
 		logger.Debugf("setting log level to %s", level)
 		logger.Reconfigure(logger.WithLevel(level))
 	}
 
-	uploader.config = &appConfig.Uploader
+	uploader.config = appConfig.Uploader
 
 	uploader.Reconfigure(options...)
 
