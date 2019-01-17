@@ -30,7 +30,8 @@ func init() {
 // NewUploader ...
 func NewUploader(options ...UploaderOption) (*Uploader, error) {
 	uploader := &Uploader{
-		pm: manager.NewManager(manager.WithRunInBackground(false)),
+		pm:     manager.NewManager(manager.WithRunInBackground(false)),
+		config: &models.UploaderConfig{},
 	}
 
 	if uploader.isLogExternal {
@@ -46,9 +47,8 @@ func NewUploader(options ...UploaderOption) (*Uploader, error) {
 		level, _ := logger.ParseLevel(appConfig.Uploader.Log.Level)
 		logger.Debugf("setting log level to %s", level)
 		logger.Reconfigure(logger.WithLevel(level))
+		uploader.config = appConfig.Uploader
 	}
-
-	uploader.config = appConfig.Uploader
 
 	uploader.Reconfigure(options...)
 
