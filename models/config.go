@@ -32,13 +32,13 @@ type UploaderConfig struct {
 }
 
 // NewConfig ...
-func NewConfig(host string, db manager.DBConfig) *UploaderConfig {
+func NewConfig() (*UploaderConfig, error) {
 	appConfig := &AppConfig{}
 	if _, err := manager.NewSimpleConfig(fmt.Sprintf("/config/app.%s.json", common.GetEnv()), appConfig); err != nil {
 		logger.Error(err.Error())
+
+		return &UploaderConfig{}, err
 	}
 
-	appConfig.Uploader.Host = host
-
-	return appConfig.Uploader
+	return appConfig.Uploader, nil
 }
