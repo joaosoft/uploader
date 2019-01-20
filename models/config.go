@@ -8,13 +8,12 @@ import (
 
 	"github.com/joaosoft/dropbox"
 
-	"github.com/joaosoft/logger"
 	"github.com/joaosoft/manager"
 )
 
 // AppConfig ...
 type AppConfig struct {
-	Uploader *UploaderConfig `json:"uploader"`
+	Uploader UploaderConfig `json:"uploader"`
 }
 
 // UploaderConfig ...
@@ -32,13 +31,9 @@ type UploaderConfig struct {
 }
 
 // NewConfig ...
-func NewConfig() (*UploaderConfig, error) {
+func NewConfig() (*AppConfig, manager.IConfig, error) {
 	appConfig := &AppConfig{}
-	if _, err := manager.NewSimpleConfig(fmt.Sprintf("/config/app.%s.json", common.GetEnv()), appConfig); err != nil {
-		logger.Error(err.Error())
+	simpleConfig, err := manager.NewSimpleConfig(fmt.Sprintf("/config/app.%s.json", common.GetEnv()), appConfig)
 
-		return &UploaderConfig{}, err
-	}
-
-	return appConfig.Uploader, nil
+	return appConfig, simpleConfig, err
 }

@@ -1,13 +1,14 @@
 package cmd
 
 import (
-	"fmt"
 	"sync"
 	"uploader/models"
 	"uploader/models/common"
 	"uploader/models/controllers"
 	"uploader/models/interactors"
 	"uploader/models/storage"
+
+	"github.com/labstack/gommon/log"
 
 	"github.com/joaosoft/migration/services"
 
@@ -29,25 +30,23 @@ func init() {
 
 // NewUploader ...
 func NewUploader(options ...UploaderOption) (*Uploader, error) {
+	config, simpleConfig, err := models.NewConfig()
 	uploader := &Uploader{
 		pm:     manager.NewManager(manager.WithRunInBackground(false)),
-		config: &models.UploaderConfig{},
+		config: &config.Uploader,
 	}
 
 	if uploader.isLogExternal {
 		uploader.pm.Reconfigure(manager.WithLogger(logger.Instance))
 	}
 
-	// load configuration File
-	appConfig := &models.AppConfig{}
-	if simpleConfig, err := manager.NewSimpleConfig(fmt.Sprintf("/config/app.%s.json", common.GetEnv()), appConfig); err != nil {
-		logger.Error(err.Error())
-	} else if appConfig.Uploader != nil {
+	if err != nil {
+		log.Error(err.Error())
+	} else {
 		uploader.pm.AddConfig("config_app", simpleConfig)
-		level, _ := logger.ParseLevel(appConfig.Uploader.Log.Level)
+		level, _ := logger.ParseLevel(config.Uploader.Log.Level)
 		logger.Debugf("setting log level to %s", level)
 		logger.Reconfigure(logger.WithLevel(level))
-		uploader.config = appConfig.Uploader
 	}
 
 	uploader.Reconfigure(options...)
@@ -67,21 +66,21 @@ func NewUploader(options ...UploaderOption) (*Uploader, error) {
 	}
 
 	// database
-	simpleDB := manager.NewSimpleDB(&appConfig.Uploader.Db)
+	simpleDB := manager.NewSimpleDB(&config.Uploader.Db)
 	if err := uploader.pm.AddDB("db_postgres", simpleDB); err != nil {
 		logger.Error(err.Error())
 		return nil, err
 	}
 
 	// redis
-	simpleRedis := manager.NewSimpleRedis(&appConfig.Uploader.Redis)
+	simpleRedis := manager.NewSimpleRedis(&config.Uploader.Redis)
 	if err := uploader.pm.AddRedis("redis", simpleRedis); err != nil {
 		logger.Error(err.Error())
 		return nil, err
 	}
 
 	// rabbitmq
-	simpleRabbitmq, err := manager.NewSimpleRabbitmqProducer(&appConfig.Uploader.Rabbitmq)
+	simpleRabbitmq, err := manager.NewSimpleRabbitmqProducer(&config.Uploader.Rabbitmq)
 	if err != nil {
 		logger.Error(err.Error())
 		return nil, err
@@ -103,7 +102,7 @@ func NewUploader(options ...UploaderOption) (*Uploader, error) {
 	case common.ConstStorageRabbitmq:
 		storageImpl = storage.NewStorageRabbitmq(simpleRabbitmq)
 	case common.ConstStorageDropbox:
-		storageImpl = storage.NewStorageDropbox(dropbox.NewDropbox(dropbox.WithConfiguration(&appConfig.Uploader.Dropbox)))
+		storageImpl = storage.NewStorageDropbox(dropbox.NewDropbox(dropbox.WithConfiguration(&config.Uploader.Dropbox)))
 	}
 
 	// web api
