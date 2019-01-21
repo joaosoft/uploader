@@ -8,18 +8,20 @@ import (
 )
 
 type StorageDatabase struct {
-	conn manager.IDB
+	conn   manager.IDB
+	logger logger.ILogger
 }
 
-func NewStorageDatabase(connection manager.IDB) *StorageDatabase {
+func NewStorageDatabase(connection manager.IDB, logger logger.ILogger) *StorageDatabase {
 	return &StorageDatabase{
-		conn: connection,
+		conn:   connection,
+		logger: logger,
 	}
 }
 
 func (storage *StorageDatabase) Upload(uploadRequest *models.UploadRequest) (*models.UploadResponse, error) {
 
-	logger.Infof("uploading file %s", uploadRequest.Name)
+	storage.logger.Infof("uploading file %s", uploadRequest.Name)
 	_, err := storage.conn.Get().Exec(`
 		INSERT INTO upload(
 			id_upload,
@@ -41,7 +43,7 @@ func (storage *StorageDatabase) Upload(uploadRequest *models.UploadRequest) (*mo
 
 func (storage *StorageDatabase) Download(idUpload string) ([]byte, error) {
 
-	logger.Infof("downloading file with id upload %s", idUpload)
+	storage.logger.Infof("downloading file with id upload %s", idUpload)
 	row := storage.conn.Get().QueryRow(`
 		SELECT file FROM upload
 		WHERE id_upload = $1

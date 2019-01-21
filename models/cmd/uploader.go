@@ -8,8 +8,6 @@ import (
 	"uploader/models/interactors"
 	"uploader/models/storage"
 
-	"github.com/labstack/gommon/log"
-
 	"github.com/joaosoft/migration/services"
 
 	"github.com/joaosoft/dropbox"
@@ -21,42 +19,37 @@ type Uploader struct {
 	config        *models.UploaderConfig
 	isLogExternal bool
 	pm            *manager.Manager
+	logger        logger.ILogger
 	mux           sync.Mutex
-}
-
-func init() {
-	logger.WithPrefix("service", "uploader")
 }
 
 // NewUploader ...
 func NewUploader(options ...UploaderOption) (*Uploader, error) {
 	config, simpleConfig, err := models.NewConfig()
-	uploader := &Uploader{
+
+	service := &Uploader{
 		pm:     manager.NewManager(manager.WithRunInBackground(false)),
+		logger: logger.NewLogDefault("uploader", logger.WarnLevel),
 		config: &config.Uploader,
 	}
 
-	if uploader.isLogExternal {
-		uploader.pm.Reconfigure(manager.WithLogger(logger.Instance))
+	if service.isLogExternal {
+		service.pm.Reconfigure(manager.WithLogger(logger.Instance))
 	}
 
 	if err != nil {
-		log.Error(err.Error())
+		service.logger.Error(err.Error())
 	} else {
-		uploader.pm.AddConfig("config_app", simpleConfig)
+		service.pm.AddConfig("config_app", simpleConfig)
 		level, _ := logger.ParseLevel(config.Uploader.Log.Level)
-		logger.Debugf("setting log level to %s", level)
-		logger.Reconfigure(logger.WithLevel(level))
+		service.logger.Debugf("setting log level to %s", level)
+		service.logger.Reconfigure(logger.WithLevel(level))
 	}
 
-	uploader.Reconfigure(options...)
-
-	if uploader.config.Host == "" {
-		uploader.config.Host = common.ConstDefaultURL
-	}
+	service.Reconfigure(options...)
 
 	// execute migrations
-	migration, err := services.NewCmdService(services.WithCmdConfiguration(&uploader.config.Migration))
+	migration, err := services.NewCmdService(services.WithCmdConfiguration(&service.config.Migration))
 	if err != nil {
 		return nil, err
 	}
@@ -67,14 +60,14 @@ func NewUploader(options ...UploaderOption) (*Uploader, error) {
 
 	// database
 	simpleDB := manager.NewSimpleDB(&config.Uploader.Db)
-	if err := uploader.pm.AddDB("db_postgres", simpleDB); err != nil {
+	if err := service.pm.AddDB("db_postgres", simpleDB); err != nil {
 		logger.Error(err.Error())
 		return nil, err
 	}
 
 	// redis
 	simpleRedis := manager.NewSimpleRedis(&config.Uploader.Redis)
-	if err := uploader.pm.AddRedis("redis", simpleRedis); err != nil {
+	if err := service.pm.AddRedis("redis", simpleRedis); err != nil {
 		logger.Error(err.Error())
 		return nil, err
 	}
@@ -86,7 +79,7 @@ func NewUploader(options ...UploaderOption) (*Uploader, error) {
 		return nil, err
 	}
 
-	if err := uploader.pm.AddRabbitmqProducer("rabbitmq", simpleRabbitmq); err != nil {
+	if err := service.pm.AddRabbitmqProducer("rabbitmq", simpleRabbitmq); err != nil {
 		logger.Error(err.Error())
 		return nil, err
 	}
@@ -94,25 +87,25 @@ func NewUploader(options ...UploaderOption) (*Uploader, error) {
 	// choose the storage implementation
 	var storageImpl interactors.IStorage
 
-	switch uploader.config.Storage {
+	switch service.config.Storage {
 	case common.ConstStorageDatabase:
-		storageImpl = storage.NewStorageDatabase(simpleDB)
+		storageImpl = storage.NewStorageDatabase(simpleDB, service.logger)
 	case common.ConstStorageRedis:
-		storageImpl = storage.NewStorageRedis(simpleRedis)
+		storageImpl = storage.NewStorageRedis(simpleRedis, service.logger)
 	case common.ConstStorageRabbitmq:
-		storageImpl = storage.NewStorageRabbitmq(simpleRabbitmq)
+		storageImpl = storage.NewStorageRabbitmq(simpleRabbitmq, service.logger)
 	case common.ConstStorageDropbox:
-		storageImpl = storage.NewStorageDropbox(dropbox.NewDropbox(dropbox.WithConfiguration(&config.Uploader.Dropbox)))
+		storageImpl = storage.NewStorageDropbox(dropbox.NewDropbox(dropbox.WithConfiguration(&config.Uploader.Dropbox)), service.logger)
 	}
 
 	// web api
-	web := manager.NewSimpleWebServer(uploader.config.Host)
-	controller := controllers.NewController(interactors.NewInteractor(storageImpl))
+	web := manager.NewSimpleWebServer(service.config.Host)
+	controller := controllers.NewController(interactors.NewInteractor(storageImpl, service.logger), service.logger)
 	controller.RegisterRoutes(web)
 
-	uploader.pm.AddWeb("api_web", web)
+	service.pm.AddWeb("api_web", web)
 
-	return uploader, nil
+	return service, nil
 }
 
 // Start ...

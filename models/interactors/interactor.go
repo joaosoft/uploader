@@ -14,22 +14,24 @@ type IStorage interface {
 
 type Interactor struct {
 	storage IStorage
+	logger  logger.ILogger
 }
 
-func NewInteractor(storage IStorage) *Interactor {
+func NewInteractor(storage IStorage, logger logger.ILogger) *Interactor {
 	return &Interactor{
 		storage: storage,
+		logger:  logger,
 	}
 }
 
 func (interactor *Interactor) Upload(uploadRequest *models.UploadRequest) (*models.UploadResponse, error) {
-	logger.WithFields(map[string]interface{}{"method": "Upload"})
-	logger.Infof("uploading file with name %s", uploadRequest.Name)
+	interactor.logger.WithFields(map[string]interface{}{"method": "Upload"})
+	interactor.logger.Infof("uploading file with name %s", uploadRequest.Name)
 
 	uploadRequest.IdUpload = common.NewULID().String()
 	response, err := interactor.storage.Upload(uploadRequest)
 	if err != nil {
-		logger.WithFields(map[string]interface{}{"error": err.Error()}).
+		interactor.logger.WithFields(map[string]interface{}{"error": err.Error()}).
 			Errorf("error uploading file with name %s on storage [ error: %s]", uploadRequest.Name, err).ToError()
 	}
 
@@ -37,12 +39,12 @@ func (interactor *Interactor) Upload(uploadRequest *models.UploadRequest) (*mode
 }
 
 func (interactor *Interactor) Download(idUpload string) ([]byte, error) {
-	logger.WithFields(map[string]interface{}{"method": "Download"})
-	logger.Infof("downloading file with id upload %s", idUpload)
+	interactor.logger.WithFields(map[string]interface{}{"method": "Download"})
+	interactor.logger.Infof("downloading file with id upload %s", idUpload)
 
 	response, err := interactor.storage.Download(idUpload)
 	if err != nil {
-		logger.WithFields(map[string]interface{}{"error": err.Error()}).
+		interactor.logger.WithFields(map[string]interface{}{"error": err.Error()}).
 			Errorf("error uploading file with id upload %s on storage [ error: %s]", idUpload, err).ToError()
 	}
 

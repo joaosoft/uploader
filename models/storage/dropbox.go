@@ -9,18 +9,20 @@ import (
 )
 
 type StorageDropbox struct {
-	conn *dropbox.Dropbox
+	conn   *dropbox.Dropbox
+	logger logger.ILogger
 }
 
-func NewStorageDropbox(connection *dropbox.Dropbox) *StorageDropbox {
+func NewStorageDropbox(connection *dropbox.Dropbox, logger logger.ILogger) *StorageDropbox {
 	return &StorageDropbox{
-		conn: connection,
+		conn:   connection,
+		logger: logger,
 	}
 }
 
 func (storage *StorageDropbox) Upload(uploadRequest *models.UploadRequest) (*models.UploadResponse, error) {
 
-	logger.Infof("uploading file %s", uploadRequest.Name)
+	storage.logger.Infof("uploading file %s", uploadRequest.Name)
 	response, err := storage.conn.File().Upload(fmt.Sprintf("/%s", uploadRequest.IdUpload), uploadRequest.File)
 	if err != nil {
 		return nil, err
@@ -33,7 +35,7 @@ func (storage *StorageDropbox) Upload(uploadRequest *models.UploadRequest) (*mod
 
 func (storage *StorageDropbox) Download(idUpload string) ([]byte, error) {
 
-	logger.Infof("downloading file with id upload %s", idUpload)
+	storage.logger.Infof("downloading file with id upload %s", idUpload)
 	response, err := storage.conn.File().Download(fmt.Sprintf("/%s", idUpload))
 	if err != nil {
 		return nil, err

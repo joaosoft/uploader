@@ -10,17 +10,19 @@ import (
 
 type StorageRedis struct {
 	conn manager.IRedis
+	logger logger.ILogger
 }
 
-func NewStorageRedis(connection manager.IRedis) *StorageRedis {
+func NewStorageRedis(connection manager.IRedis, logger logger.ILogger) *StorageRedis {
 	return &StorageRedis{
 		conn: connection,
+		logger: logger,
 	}
 }
 
 func (storage *StorageRedis) Upload(uploadRequest *models.UploadRequest) (*models.UploadResponse, error) {
 
-	logger.Infof("uploading file %s", uploadRequest.Name)
+	storage.logger.Infof("uploading file %s", uploadRequest.Name)
 	key := fmt.Sprintf("image:%s", uploadRequest.IdUpload)
 	storage.conn.Set(key, uploadRequest.File)
 
@@ -31,7 +33,7 @@ func (storage *StorageRedis) Upload(uploadRequest *models.UploadRequest) (*model
 
 func (storage *StorageRedis) Download(idUpload string) ([]byte, error) {
 
-	logger.Infof("downloading file with id upload %s", idUpload)
+	storage.logger.Infof("downloading file with id upload %s", idUpload)
 	key := fmt.Sprintf("image:%s", idUpload)
 
 	return storage.conn.Get(key)

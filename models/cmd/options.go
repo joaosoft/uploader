@@ -27,7 +27,7 @@ func WithConfiguration(config *models.UploaderConfig) UploaderOption {
 // WithLogger ...
 func WithLogger(l logger.ILogger) UploaderOption {
 	return func(uploader *Uploader) {
-		logger.Instance = l
+		uploader.logger = l
 		uploader.isLogExternal = true
 	}
 }
@@ -35,7 +35,7 @@ func WithLogger(l logger.ILogger) UploaderOption {
 // WithLogLevel ...
 func WithLogLevel(level logger.Level) UploaderOption {
 	return func(uploader *Uploader) {
-		logger.SetLevel(level)
+		uploader.logger.SetLevel(level)
 	}
 }
 

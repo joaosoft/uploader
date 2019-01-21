@@ -35,5 +35,9 @@ func NewConfig() (*AppConfig, manager.IConfig, error) {
 	appConfig := &AppConfig{}
 	simpleConfig, err := manager.NewSimpleConfig(fmt.Sprintf("/config/app.%s.json", common.GetEnv()), appConfig)
 
+	if appConfig.Uploader.Host == "" {
+		appConfig.Uploader.Host = common.ConstDefaultURL
+	}
+
 	return appConfig, simpleConfig, err
 }
