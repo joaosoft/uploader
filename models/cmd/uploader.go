@@ -30,7 +30,7 @@ func NewUploader(options ...UploaderOption) (*Uploader, error) {
 	service := &Uploader{
 		pm:     manager.NewManager(manager.WithRunInBackground(false)),
 		logger: logger.NewLogDefault("uploader", logger.WarnLevel),
-		config: &config.Uploader,
+		config: config.Uploader,
 	}
 
 	if service.isLogExternal {
@@ -39,11 +39,15 @@ func NewUploader(options ...UploaderOption) (*Uploader, error) {
 
 	if err != nil {
 		service.logger.Error(err.Error())
-	} else {
+	} else if config.Uploader != nil {
 		service.pm.AddConfig("config_app", simpleConfig)
 		level, _ := logger.ParseLevel(config.Uploader.Log.Level)
 		service.logger.Debugf("setting log level to %s", level)
 		service.logger.Reconfigure(logger.WithLevel(level))
+	} else {
+		config.Uploader = &models.UploaderConfig{
+			Host: common.ConstDefaultURL,
+		}
 	}
 
 	service.Reconfigure(options...)

@@ -13,7 +13,7 @@ import (
 
 // AppConfig ...
 type AppConfig struct {
-	Uploader UploaderConfig `json:"uploader"`
+	Uploader *UploaderConfig `json:"uploader"`
 }
 
 // UploaderConfig ...
@@ -34,10 +34,6 @@ type UploaderConfig struct {
 func NewConfig() (*AppConfig, manager.IConfig, error) {
 	appConfig := &AppConfig{}
 	simpleConfig, err := manager.NewSimpleConfig(fmt.Sprintf("/config/app.%s.json", common.GetEnv()), appConfig)
-
-	if appConfig.Uploader.Host == "" {
-		appConfig.Uploader.Host = common.ConstDefaultURL
-	}
 
 	return appConfig, simpleConfig, err
 }
