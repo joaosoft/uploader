@@ -19,7 +19,7 @@ type Controller struct {
 func NewController(interactor *interactors.Interactor, logger logger.ILogger) *Controller {
 	return &Controller{
 		interactor: interactor,
-		logger: logger,
+		logger:     logger,
 	}
 }
 
@@ -28,10 +28,12 @@ func (controller *Controller) DoNothing(ctx *web.Context) error {
 }
 
 func (controller *Controller) Upload(ctx *web.Context) error {
-	file := ctx.Request.Attachments["file"]
+	file := ctx.Request.FormData["file"]
 	uploadRequest := &models.UploadRequest{
-		Name: file.File,
-		File: make([]byte, base64.StdEncoding.EncodedLen(len(file.Body))),
+		Section:  ctx.Request.GetFormDataString("section"),
+		Name:     file.Name,
+		FileName: file.FileName,
+		File:     make([]byte, base64.StdEncoding.EncodedLen(len(file.Body))),
 	}
 
 	base64.StdEncoding.Encode(uploadRequest.File, file.Body)
@@ -55,9 +57,10 @@ func (controller *Controller) Upload(ctx *web.Context) error {
 }
 
 func (controller *Controller) Download(ctx *web.Context) error {
-	idUpload := ctx.Request.GetUrlParam("id_upload")
 	downloadRequest := &models.DownloadRequest{
-		IdUpload: idUpload,
+		Section:  ctx.Request.GetUrlParam("section"),
+		Size:     ctx.Request.GetUrlParam("size"),
+		IdUpload: ctx.Request.GetUrlParam("id_upload"),
 	}
 
 	if errs := validator.Validate(downloadRequest); len(errs) > 0 {
@@ -67,16 +70,16 @@ func (controller *Controller) Download(ctx *web.Context) error {
 		return ctx.Response.JSON(web.StatusBadRequest, models.ErrorResponse{Code: web.StatusBadRequest, Message: err.Error()})
 	}
 
-	response, err := controller.interactor.Download(idUpload)
+	response, err := controller.interactor.Download(downloadRequest)
 	if err != nil {
 		err := errors.New(errors.ErrorLevel, 0, err)
 		controller.logger.WithFields(map[string]interface{}{"error": err.Error()}).
-			Errorf("error downloading file with id upload %s", idUpload).ToError()
+			Errorf("error downloading file with id upload %s", downloadRequest.IdUpload).ToError()
 		return ctx.Response.JSON(web.StatusBadRequest, models.ErrorResponse{Code: web.StatusBadRequest, Message: err.Error()})
 	} else {
 		decoded := make([]byte, base64.StdEncoding.DecodedLen(len(response)))
 		base64.StdEncoding.Decode(decoded, response)
 
-		return ctx.Response.File(web.StatusOK, idUpload, decoded)
+		return ctx.Response.File(web.StatusOK, downloadRequest.IdUpload, decoded)
 	}
 }

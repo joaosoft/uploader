@@ -1,41 +1,36 @@
 package storage
 
 import (
-	"encoding/json"
 	"fmt"
-	"uploader/models"
 
 	"github.com/joaosoft/logger"
 	"github.com/joaosoft/manager"
 )
 
 type StorageRabbitmq struct {
-	conn manager.IRabbitmqProducer
+	conn   manager.IRabbitmqProducer
 	logger logger.ILogger
 }
 
 func NewStorageRabbitmq(connection manager.IRabbitmqProducer, logger logger.ILogger) *StorageRabbitmq {
 	return &StorageRabbitmq{
-		conn: connection,
+		conn:   connection,
 		logger: logger,
 	}
 }
 
-func (storage *StorageRabbitmq) Upload(uploadRequest *models.UploadRequest) (*models.UploadResponse, error) {
+func (storage *StorageRabbitmq) Upload(path string, file []byte) (string, error) {
 
-	storage.logger.Infof("uploading file %s", uploadRequest.Name)
+	storage.logger.Infof("uploading file %s", path)
 	routingKey := fmt.Sprintf("upload.file")
-	message, _ := json.Marshal(uploadRequest)
-	storage.conn.Publish(routingKey, message, true)
+	storage.conn.Publish(routingKey, file, true)
 
-	return &models.UploadResponse{
-		IdUpload: uploadRequest.IdUpload,
-	}, nil
+	return path, nil
 }
 
-func (storage *StorageRabbitmq) Download(idUpload string) ([]byte, error) {
+func (storage *StorageRabbitmq) Download(path string) ([]byte, error) {
 
-	storage.logger.Infof("downloading file with id upload %s", idUpload)
+	storage.logger.Infof("downloading file with id upload %s", path)
 
 	return nil, nil
 }

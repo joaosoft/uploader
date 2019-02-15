@@ -1,56 +1,60 @@
 version: '3.3'
 services:
 
-  uploader.postgres:
-    image: postgres
-    container_name: uploader.postgres
+  version: '3.3'
+  services:
+
+  home.postgres:
+    image: postgres:latest
+    container_name: home.postgres
     restart: always
+    command: postgres -c config_file=/postgresql.conf
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
-      PGDATA: "/var/lib/postgresql/data/pgdata"
+      POSTGRES_DB: postgres
     ports:
-    - 7300:5432
+      - 7000:5432
     volumes:
-    - "$HOME/docker/postgres:/var/lib/postgresql/data"
-    - "$HOME/docker/postgres/postgres:/var/log/postgres"
-    - "./config/postgres/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql"
-    - "./config/postgres/postgresql.conf:/postgresql.conf"
+      - "$HOME/docker/home/postgres:/var/lib/postgresql/data"
+      - "$HOME/docker/home/log:/var/log/postgres"
+      - "./examples/config/postgres/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql"
+      - "./examples/config/postgres/postgresql.conf:/postgresql.conf"
     networks:
       default:
         aliases:
-        - postgres
+          - home.postgres
 
-  uploader.redis:
+  home.redis:
     image: redis:alpine
-    container_name: uploader.redis
+    container_name: home.redis
     ports:
     - 7400:6379
     volumes:
-    - "$HOME/docker/redis/redis:/var/log/redis"
+    - "$HOME/docker/home/redis:/var/log/redis"
     - "./config/redis/redis.conf:/usr/local/etc/redis/redis.conf"
     networks:
       default:
         aliases:
-        - redis
+        - home.redis
 
-  uploader.rabbitmq:
+  home.rabbitmq:
     image: rabbitmq:3.7.7-management
-    container_name: uploader.rabbitmq
-    hostname: rabbitmq
+    container_name: home.home.rabbitmq
+    hostname: home.rabbitmq
     environment:
       RABBITMQ_DEFAULT_VHOST: local
       RABBITMQ_DEFAULT_USER:  root
       RABBITMQ_DEFAULT_PASS:  password
     volumes:
-    - "$HOME/docker/rabbitmq:/var/lib/rabbitmq:rw"
+    - "$HOME/docker/home/rabbitmq:/var/lib/rabbitmq:rw"
     ports:
     - 15673:15672
     - 5673:5672
     networks:
       default:
         aliases:
-        - rabbitmq
+        - home.rabbitmq
 
 volumes:
   esdata1:

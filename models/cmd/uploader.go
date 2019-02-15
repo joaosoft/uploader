@@ -63,21 +63,25 @@ func NewUploader(options ...UploaderOption) (*Uploader, error) {
 	}
 
 	// database
-	simpleDB := manager.NewSimpleDB(&config.Uploader.Db)
+	simpleDB := service.pm.NewSimpleDB(&config.Uploader.Db)
 	if err := service.pm.AddDB("db_postgres", simpleDB); err != nil {
 		logger.Error(err.Error())
 		return nil, err
 	}
 
+	if err := simpleDB.Start(nil); err != nil {
+		return nil, err
+	}
+
 	// redis
-	simpleRedis := manager.NewSimpleRedis(&config.Uploader.Redis)
+	simpleRedis := service.pm.NewSimpleRedis(&config.Uploader.Redis)
 	if err := service.pm.AddRedis("redis", simpleRedis); err != nil {
 		logger.Error(err.Error())
 		return nil, err
 	}
 
 	// rabbitmq
-	simpleRabbitmq, err := manager.NewSimpleRabbitmqProducer(&config.Uploader.Rabbitmq)
+	simpleRabbitmq, err := service.pm.NewSimpleRabbitmqProducer(&config.Uploader.Rabbitmq)
 	if err != nil {
 		logger.Error(err.Error())
 		return nil, err
@@ -93,7 +97,10 @@ func NewUploader(options ...UploaderOption) (*Uploader, error) {
 
 	switch service.config.Storage {
 	case common.ConstStorageDatabase:
-		storageImpl = storage.NewStorageDatabase(simpleDB, service.logger)
+		storageImpl, err = storage.NewStorageDatabase(simpleDB, service.config.Db.Driver, service.logger)
+		if err != nil {
+			return nil, err
+		}
 	case common.ConstStorageRedis:
 		storageImpl = storage.NewStorageRedis(simpleRedis, service.logger)
 	case common.ConstStorageRabbitmq:
@@ -103,8 +110,12 @@ func NewUploader(options ...UploaderOption) (*Uploader, error) {
 	}
 
 	// web api
-	web := manager.NewSimpleWebServer(service.config.Host)
-	controller := controllers.NewController(interactors.NewInteractor(storageImpl, service.logger), service.logger)
+	web := service.pm.NewSimpleWebServer(service.config.Host)
+	interactor, err := interactors.NewInteractor(storageImpl.(*storage.StorageDatabase), storageImpl, service.logger)
+	if err != nil {
+		return nil, err
+	}
+	controller := controllers.NewController(interactor, service.logger)
 	controller.RegisterRoutes(web)
 
 	service.pm.AddWeb("api_web", web)

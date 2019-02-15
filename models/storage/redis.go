@@ -2,8 +2,6 @@ package storage
 
 import (
 	"fmt"
-	"uploader/models"
-
 	"github.com/joaosoft/logger"
 	"github.com/joaosoft/manager"
 )
@@ -20,21 +18,19 @@ func NewStorageRedis(connection manager.IRedis, logger logger.ILogger) *StorageR
 	}
 }
 
-func (storage *StorageRedis) Upload(uploadRequest *models.UploadRequest) (*models.UploadResponse, error) {
+func (storage *StorageRedis) Upload(path string, file []byte) (string, error) {
 
-	storage.logger.Infof("uploading file %s", uploadRequest.Name)
-	key := fmt.Sprintf("image:%s", uploadRequest.IdUpload)
-	storage.conn.Set(key, uploadRequest.File)
+	storage.logger.Infof("uploading file %s", path)
+	key := fmt.Sprintf("image:%s", path)
+	storage.conn.Set(key, file)
 
-	return &models.UploadResponse{
-		IdUpload: uploadRequest.IdUpload,
-	}, nil
+	return path, nil
 }
 
-func (storage *StorageRedis) Download(idUpload string) ([]byte, error) {
+func (storage *StorageRedis) Download(path string) ([]byte, error) {
 
-	storage.logger.Infof("downloading file with id upload %s", idUpload)
-	key := fmt.Sprintf("image:%s", idUpload)
+	storage.logger.Infof("downloading file with id upload %s", path)
+	key := fmt.Sprintf("image:%s", path)
 
 	return storage.conn.Get(key)
 }
