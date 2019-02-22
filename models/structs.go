@@ -56,6 +56,7 @@ func (i *ImageSizeList) Scan(src interface{}) error {
 	if src == nil {
 		return nil
 	}
+	fmt.Println(string(src.([]byte)))
 	source, ok := src.([]byte)
 	if !ok {
 		return fmt.Errorf("invalid type")

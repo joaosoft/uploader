@@ -1,6 +1,6 @@
 {
   "uploader": {
-    "storage": "database",
+    "storage": "dropbox",
     "host": "localhost:8001",
     "db": {
       "driver": "postgres",

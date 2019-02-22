@@ -71,8 +71,8 @@ func (storage *StorageDatabase) LoadSections() ([]*models.Section, error) {
 		`COALESCE((SELECT ARRAY_TO_JSON(ARRAY_AGG(ROW_TO_JSON(t))) 
 				FROM (SELECT "name",
 			   		   "path",
-			   		   width
-			   		   hight
+			   		   width,
+			   		   height
 			  	FROM uploader.section_image_size sisize
 			  	JOIN uploader.image_size isize ON isize.id_image_size = sisize.fk_image_size
 			  	WHERE sisize.fk_section = s.id_section) t), '[]') AS image_sizes`}...).

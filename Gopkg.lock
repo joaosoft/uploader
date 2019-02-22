@@ -20,10 +20,10 @@
   version = "v1.4.1"
 
 [[projects]]
-  branch = "master"
   name = "github.com/golang/snappy"
   packages = ["."]
-  revision = "2e65f85255dbc3072edf28d6b5b8efc472979f5a"
+  revision = "2a8bb927dd31d8daada140a5d09578521ce5c36a"
+  version = "v0.0.1"
 
 [[projects]]
   name = "github.com/hashicorp/hcl"
@@ -58,7 +58,7 @@
   branch = "master"
   name = "github.com/joaosoft/dropbox"
   packages = ["."]
-  revision = "563d3047bcab35cda115b40e0b31aee352fd8d96"
+  revision = "ec2b82693e0fb1cafefdb433165cc1d00f1e8a1f"
 
 [[projects]]
   branch = "master"
@@ -88,7 +88,7 @@
   branch = "master"
   name = "github.com/joaosoft/pictures"
   packages = ["."]
-  revision = "b664ac4e48a96ecf0761902101fd789565e989bf"
+  revision = "a0d67f845fc7fbc1cd1bcc6ed47e03f0dd0ed5c7"
 
 [[projects]]
   branch = "master"
@@ -100,7 +100,7 @@
   branch = "master"
   name = "github.com/joaosoft/web"
   packages = ["."]
-  revision = "3f7d0b0e459e1f7251102f5872f68127602a5568"
+  revision = "40995d1e4ec525bc4004063a5f389abd1b771e7a"
 
 [[projects]]
   branch = "master"
@@ -141,14 +141,14 @@
 [[projects]]
   name = "github.com/mattn/go-colorable"
   packages = ["."]
-  revision = "efa589957cd060542a26d2dd7832fd6a6c6c3ade"
-  version = "v0.1.0"
+  revision = "3a70a971f94a22f2fa562ffcc7a0eb45f5daf045"
+  version = "v0.1.1"
 
 [[projects]]
   name = "github.com/mattn/go-isatty"
   packages = ["."]
-  revision = "6ca4dbf54d38eea1a992b3c722a76a5d1c4cb25c"
-  version = "v0.0.4"
+  revision = "a6dda38a851a575e6799957cdd53ffe0b3fdd90f"
+  version = "v0.0.5"
 
 [[projects]]
   name = "github.com/mitchellh/mapstructure"
@@ -238,19 +238,19 @@
     "acme",
     "acme/autocert"
   ]
-  revision = "74369b46fc6756741c016591724fd1cb8e26845f"
+  revision = "a4c6cb3142f211c99e4bf4cd769535b29a9b616f"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/image"
   packages = ["bmp"]
-  revision = "ef4a1470e0dc5915f2f5fa04a28eeab72c6936a4"
+  revision = "31aff87c08e9a5e5d524279a564f96968336f886"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "e77772198cdc3dbfcf7f2de96630204df9fd3a0b"
+  revision = "cd391775e71e684db52b63df9affd58269495083"
 
 [[projects]]
   name = "golang.org/x/text"

@@ -6,11 +6,12 @@ import (
 	"io/ioutil"
 	"math/rand"
 	"os"
+	"path"
 	"time"
 
 	"strings"
 
-	errors "github.com/joaosoft/errors"
+	"github.com/joaosoft/errors"
 	"github.com/oklog/ulid"
 )
 
@@ -106,4 +107,8 @@ func NewULID() ulid.ULID {
 	entropy := rand.New(rand.NewSource(t.UnixNano()))
 
 	return ulid.MustNew(ulid.Timestamp(t), entropy)
+}
+
+func GetExtension(fileName string) string {
+	return strings.ToLower(path.Ext(fileName))
 }

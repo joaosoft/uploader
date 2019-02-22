@@ -2,6 +2,7 @@ package interactors
 
 import (
 	"fmt"
+	"path"
 	"uploader/models"
 	"uploader/models/common"
 	"uploader/models/storage"
@@ -47,39 +48,43 @@ func (interactor *Interactor) Upload(uploadRequest *models.UploadRequest) (*mode
 	interactor.logger.WithFields(map[string]interface{}{"method": "Upload"})
 	interactor.logger.Infof("uploading file with name %s", uploadRequest.Name)
 
-	// upload the original
 	uploadRequest.IdUpload = common.NewULID().String()
-	_, err := interactor.storage.Upload(fmt.Sprintf("%s/%s", uploadRequest.Section, "original"), uploadRequest.File)
+
+	var section *models.Section
+	if s, ok := interactor.sections[uploadRequest.Section]; ok {
+		section = s
+	} else {
+		return nil, interactor.logger.Errorf("invalid section name: %s", uploadRequest.Section).ToError()
+	}
+
+	// upload the original
+	_, err := interactor.storage.Upload(fmt.Sprintf("%s/%s/%s%s", uploadRequest.Section, "original", uploadRequest.IdUpload, common.GetExtension(uploadRequest.FileName)), uploadRequest.File)
 	if err != nil {
-		interactor.logger.WithFields(map[string]interface{}{"error": err.Error()}).
+		return nil, interactor.logger.WithFields(map[string]interface{}{"error": err.Error()}).
 			Errorf("error uploading original file with name %s on storage [ error: %s]", uploadRequest.Name, err).ToError()
 	}
 
-	go func() {
-		for _, section := range interactor.sections {
-			for _, imageSize := range section.ImageSizes {
-				picture, err := pictures.FromBytes(uploadRequest.File)
-				if err != nil {
-					interactor.logger.WithFields(map[string]interface{}{"error": err.Error()}).
-						Errorf("error uploading file with size (width %d, height %d) with name %s on storage [ error: %s]", imageSize.Width, imageSize.Height, uploadRequest.Name, err).ToError()
-				}
-
-				picture.Resize(imageSize.Width, imageSize.Height)
-
-				uploadRequest.File, err = picture.ToBytes()
-				if err != nil {
-					interactor.logger.WithFields(map[string]interface{}{"error": err.Error()}).
-						Errorf("error uploading file with size (width %d, height %d) with name %s on storage [ error: %s]", imageSize.Width, imageSize.Height, uploadRequest.Name, err).ToError()
-				}
-
-				_, err = interactor.storage.Upload(fmt.Sprintf("%s/%s", section.Path, imageSize.Path), uploadRequest.File)
-				if err != nil {
-					interactor.logger.WithFields(map[string]interface{}{"error": err.Error()}).
-						Errorf("error uploading file with size (width %d, height %d) with name %s on storage [ error: %s]", imageSize.Width, imageSize.Height, uploadRequest.Name, err).ToError()
-				}
-			}
+	// upload image sizes
+	for _, imageSize := range section.ImageSizes {
+		picture, err := pictures.FromBytes(uploadRequest.File)
+		if err != nil {
+			return nil, interactor.logger.WithFields(map[string]interface{}{"error": err.Error()}).
+				Errorf("error uploading file with size (width %d, height %d) with name %s on storage [ error: %s]", imageSize.Width, imageSize.Height, uploadRequest.Name, err).ToError()
 		}
-	}()
+
+		picture.Resize(imageSize.Width, imageSize.Height)
+		uploadRequest.File, err = picture.ToBytes(pictures.PNGEncoder())
+		if err != nil {
+			return nil, interactor.logger.WithFields(map[string]interface{}{"error": err.Error()}).
+				Errorf("error uploading file with size (width %d, height %d) with name %s on storage [ error: %s]", imageSize.Width, imageSize.Height, common.GetExtension(uploadRequest.FileName), err).ToError()
+		}
+
+		_, err = interactor.storage.Upload(fmt.Sprintf("%s/%s/%s%s", section.Path, imageSize.Path, uploadRequest.IdUpload, path.Ext(uploadRequest.FileName)), uploadRequest.File)
+		if err != nil {
+			return nil, interactor.logger.WithFields(map[string]interface{}{"error": err.Error()}).
+				Errorf("error uploading file with size (width %d, height %d) with name %s on storage [ error: %s]", imageSize.Width, imageSize.Height, uploadRequest.Name, err).ToError()
+		}
+	}
 
 	return &models.UploadResponse{IdUpload: uploadRequest.IdUpload}, err
 }
@@ -90,7 +95,7 @@ func (interactor *Interactor) Download(downloadRequest *models.DownloadRequest) 
 
 	response, err := interactor.storage.Download(fmt.Sprintf("%s/%s/%s", downloadRequest.Section, downloadRequest.Size, downloadRequest.IdUpload))
 	if err != nil {
-		interactor.logger.WithFields(map[string]interface{}{"error": err.Error()}).
+		return nil, interactor.logger.WithFields(map[string]interface{}{"error": err.Error()}).
 			Errorf("error uploading file with id upload %s on storage [ error: %s]", downloadRequest.IdUpload, err).ToError()
 	}
 

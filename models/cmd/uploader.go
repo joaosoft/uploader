@@ -111,7 +111,13 @@ func NewUploader(options ...UploaderOption) (*Uploader, error) {
 
 	// web api
 	web := service.pm.NewSimpleWebServer(service.config.Host)
-	interactor, err := interactors.NewInteractor(storageImpl.(*storage.StorageDatabase), storageImpl, service.logger)
+
+	databaseStorage, err := storage.NewStorageDatabase(simpleDB, service.config.Db.Driver, service.logger)
+	if err != nil {
+		return nil, err
+	}
+
+	interactor, err := interactors.NewInteractor(databaseStorage, storageImpl, service.logger)
 	if err != nil {
 		return nil, err
 	}

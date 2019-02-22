@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"encoding/base64"
 	"uploader/models"
 	"uploader/models/interactors"
 
@@ -33,10 +32,8 @@ func (controller *Controller) Upload(ctx *web.Context) error {
 		Section:  ctx.Request.GetFormDataString("section"),
 		Name:     file.Name,
 		FileName: file.FileName,
-		File:     make([]byte, base64.StdEncoding.EncodedLen(len(file.Body))),
+		File:     file.Body,
 	}
-
-	base64.StdEncoding.Encode(uploadRequest.File, file.Body)
 
 	if errs := validator.Validate(uploadRequest); len(errs) > 0 {
 		err := errors.New(errors.ErrorLevel, 0, "upload", errs)
@@ -77,9 +74,6 @@ func (controller *Controller) Download(ctx *web.Context) error {
 			Errorf("error downloading file with id upload %s", downloadRequest.IdUpload).ToError()
 		return ctx.Response.JSON(web.StatusBadRequest, models.ErrorResponse{Code: web.StatusBadRequest, Message: err.Error()})
 	} else {
-		decoded := make([]byte, base64.StdEncoding.DecodedLen(len(response)))
-		base64.StdEncoding.Decode(decoded, response)
-
-		return ctx.Response.File(web.StatusOK, downloadRequest.IdUpload, decoded)
+		return ctx.Response.File(web.StatusOK, downloadRequest.IdUpload, response)
 	}
 }
