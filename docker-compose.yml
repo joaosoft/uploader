@@ -1,9 +1,6 @@
 version: '3.3'
 services:
 
-  version: '3.3'
-  services:
-
   home.postgres:
     image: postgres:latest
     container_name: home.postgres
