@@ -30,6 +30,7 @@
         "database": "schema/db/postgres"
       },
       "db": {
+        "schema": "uploader",
         "driver": "postgres",
         "datasource": "postgres://user:password@localhost:7000/postgres?sslmode=disable&search_path=uploader"
       },
