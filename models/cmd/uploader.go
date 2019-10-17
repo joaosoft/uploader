@@ -106,7 +106,11 @@ func NewUploader(options ...UploaderOption) (*Uploader, error) {
 	case common.ConstStorageRabbitmq:
 		storageImpl = storage.NewStorageRabbitmq(simpleRabbitmq, service.logger)
 	case common.ConstStorageDropbox:
-		storageImpl = storage.NewStorageDropbox(dropbox.NewDropbox(dropbox.WithConfiguration(&config.Uploader.Dropbox)), service.logger)
+		dropboxInstance, err := dropbox.NewDropbox(dropbox.WithConfiguration(&config.Uploader.Dropbox))
+		if err != nil {
+			return nil, err
+		}
+		storageImpl = storage.NewStorageDropbox(dropboxInstance, service.logger)
 	}
 
 	// web api
