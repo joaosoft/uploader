@@ -73,11 +73,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:660ee95654649c9f20e8724f818812bb7709e180f6321017ecddf5448b69c7e7"
+  digest = "1:06356c51afb55c1e88671474e0da4ce6c194fc96dd6320e58d855610ad3ac5f1"
   name = "github.com/joaosoft/dbr"
   packages = ["."]
   pruneopts = "UT"
-  revision = "5a9b49024a96f62fcf6ff21c49a1ec33c076d305"
+  revision = "7be6ba0aa152ee8ad132983ba2b636f0004e82e4"
 
 [[projects]]
   branch = "master"

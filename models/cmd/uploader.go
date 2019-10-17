@@ -69,26 +69,7 @@ func NewUploader(options ...UploaderOption) (*Uploader, error) {
 		return nil, err
 	}
 
-	if err := simpleDB.Start(nil); err != nil {
-		return nil, err
-	}
-
-	// redis
-	simpleRedis := service.pm.NewSimpleRedis(&config.Uploader.Redis)
-	if err := service.pm.AddRedis("redis", simpleRedis); err != nil {
-		logger.Error(err.Error())
-		return nil, err
-	}
-
-	// rabbitmq
-	simpleRabbitmq, err := service.pm.NewSimpleRabbitmqProducer(&config.Uploader.Rabbitmq)
-	if err != nil {
-		logger.Error(err.Error())
-		return nil, err
-	}
-
-	if err := service.pm.AddRabbitmqProducer("rabbitmq", simpleRabbitmq); err != nil {
-		logger.Error(err.Error())
+	if err := simpleDB.Start(); err != nil {
 		return nil, err
 	}
 
@@ -102,8 +83,25 @@ func NewUploader(options ...UploaderOption) (*Uploader, error) {
 			return nil, err
 		}
 	case common.ConstStorageRedis:
+		simpleRedis := service.pm.NewSimpleRedis(&config.Uploader.Redis)
+		if err := service.pm.AddRedis("redis", simpleRedis); err != nil {
+			logger.Error(err.Error())
+			return nil, err
+		}
+
 		storageImpl = storage.NewStorageRedis(simpleRedis, service.logger)
 	case common.ConstStorageRabbitmq:
+		simpleRabbitmq, err := service.pm.NewSimpleRabbitmqProducer(&config.Uploader.Rabbitmq)
+		if err != nil {
+			logger.Error(err.Error())
+			return nil, err
+		}
+
+		if err := service.pm.AddRabbitmqProducer("rabbitmq", simpleRabbitmq); err != nil {
+			logger.Error(err.Error())
+			return nil, err
+		}
+
 		storageImpl = storage.NewStorageRabbitmq(simpleRabbitmq, service.logger)
 	case common.ConstStorageDropbox:
 		dropboxInstance, err := dropbox.NewDropbox(dropbox.WithConfiguration(&config.Uploader.Dropbox))
