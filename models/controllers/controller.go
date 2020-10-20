@@ -36,7 +36,7 @@ func (controller *Controller) Upload(ctx *web.Context) error {
 	}
 
 	if errs := validator.Validate(uploadRequest); len(errs) > 0 {
-		err := errors.New(errors.ErrorLevel, 0, "upload", errs)
+		err := errors.New(errors.LevelError, 0, "upload", errs)
 		controller.logger.WithFields(map[string]interface{}{"error": err.Error()}).
 			Error("error when validating body of upload request").ToError()
 		return ctx.Response.JSON(web.StatusBadRequest, models.ErrorResponse{Code: web.StatusBadRequest, Message: err.Error()})
@@ -44,7 +44,7 @@ func (controller *Controller) Upload(ctx *web.Context) error {
 
 	response, err := controller.interactor.Upload(uploadRequest)
 	if err != nil {
-		err := errors.New(errors.ErrorLevel, 0, err)
+		err := errors.New(errors.LevelError, 0, err)
 		controller.logger.WithFields(map[string]interface{}{"error": err.Error()}).
 			Errorf("error uploading file %s", uploadRequest.Name).ToError()
 		return ctx.Response.JSON(web.StatusBadRequest, models.ErrorResponse{Code: web.StatusBadRequest, Message: err.Error()})
@@ -61,7 +61,7 @@ func (controller *Controller) Download(ctx *web.Context) error {
 	}
 
 	if errs := validator.Validate(downloadRequest); len(errs) > 0 {
-		err := errors.New(errors.ErrorLevel, 0, "download", errs)
+		err := errors.New(errors.LevelError, 0, "download", errs)
 		controller.logger.WithFields(map[string]interface{}{"error": err.Error()}).
 			Error("error when validating body of download request").ToError()
 		return ctx.Response.JSON(web.StatusBadRequest, models.ErrorResponse{Code: web.StatusBadRequest, Message: err.Error()})
@@ -69,7 +69,7 @@ func (controller *Controller) Download(ctx *web.Context) error {
 
 	response, err := controller.interactor.Download(downloadRequest)
 	if err != nil {
-		err := errors.New(errors.ErrorLevel, 0, err)
+		err := errors.New(errors.LevelError, 0, err)
 		controller.logger.WithFields(map[string]interface{}{"error": err.Error()}).
 			Errorf("error downloading file with id upload %s", downloadRequest.IdUpload).ToError()
 		return ctx.Response.JSON(web.StatusBadRequest, models.ErrorResponse{Code: web.StatusBadRequest, Message: err.Error()})
