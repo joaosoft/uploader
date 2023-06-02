@@ -1,7 +1,7 @@
 package main
 
 import (
-	"uploader/models/cmd"
+	"github.com/joaosoft/uploader/models/cmd"
 )
 
 func main() {
