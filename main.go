@@ -10,7 +10,7 @@ func main() {
 		panic(err)
 	}
 
-	if err := uploader.Start(); err != nil {
+	if err = uploader.Start(); err != nil {
 		panic(err)
 	}
 }
